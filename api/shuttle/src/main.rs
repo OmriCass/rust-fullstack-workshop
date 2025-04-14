@@ -63,10 +63,29 @@ async fn movie_review_comment_reply_like_dislike_id() -> &'static str {
 }
 
 #[shuttle_runtime::main]
-async fn main() -> ShuttleActixWeb<impl FnOnce(&mut ServiceConfig) + Send + Clone + 'static> {
+async fn actix_web(
+    #[shuttle_shared_db::Postgres] pool: sqlx::PgPool,
+) -> ShuttleActixWeb<impl FnOnce(&mut ServiceConfig) + Send + Clone + 'static> {
     let config = move |cfg: &mut ServiceConfig| {
-        cfg.service(hello_world);
+        cfg.service(hello_world)
+            .service(login)
+            .service(register)
+            .service(movie)
+            .service(movie_id)
+            .service(movie_review)
+            .service(movie_review_id)
+            .service(movie_review_comment)
+            .service(movie_review_comment_id)
+            .service(movie_review_comment_reply)
+            .service(movie_review_comment_reply_id)
+            .service(movie_review_comment_reply_like)
+            .service(movie_review_comment_reply_like_id)
+            .service(movie_review_comment_reply_like_dislike)
+            .service(movie_review_comment_reply_like_dislike_id);
     };
 
     Ok(config.into())
 }
+
+
+
