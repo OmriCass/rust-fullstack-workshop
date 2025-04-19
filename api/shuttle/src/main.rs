@@ -71,6 +71,10 @@ async fn actix_web(
     #[shuttle_shared_db::Postgres] pool: sqlx::PgPool,
 ) -> ShuttleActixWeb<impl FnOnce(&mut ServiceConfig) + Send + Clone + 'static> {
 
+    pool.execute(include_str!("../../../api/db/schema.sql"))
+    .await
+    .map_err(CustomError::new)?;
+
     let config = move |cfg: &mut ServiceConfig| {
         cfg.service(hello_world)
             .service(login)
